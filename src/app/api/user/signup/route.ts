@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     console.log(("Checking existing user"))
     const existingUser = await User.findOne({ email: email });
     if (existingUser) {
-      return NextResponse.json({ message: "User already exists!" }, { status: 409 })
+      return NextResponse.json({ message: "User already exists!", success: false }, { status: 409 })
     }
     console.log("Creating new user")
     //register user
