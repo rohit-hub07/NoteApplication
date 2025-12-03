@@ -48,7 +48,6 @@ export default function Navbar() {
   return (
     <nav className="flex -m-px justify-center justify-items-center">
       <Link href="/home" className="mr-5">Home</Link>
-      <Link href="/createtask" className="ml-5">Add Task</Link>
       <div className="flex ml-5 justify-between">
         {!userId ? (
           <>

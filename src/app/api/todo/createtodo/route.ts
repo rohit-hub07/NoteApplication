@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     // await newTask.save();
     return NextResponse.json({
-      message: "Todo created successfully",
+      message: "Task created successfully",
       success: true,
       task: newTask
     }, { status: 201 })
