@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   console.log("path inside of middleware: ", path);
-  const pathName = path === "/login" || path === "/signup"
+  const pathName = path === "/login" || path === "/signup" || path === "/home"
 
   const token = request.cookies.get('token')?.value || ''
   if (pathName && token) {
