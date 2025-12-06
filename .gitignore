@@ -13,6 +13,8 @@
 # testing
 /coverage
 
+electron.mjs
+
 # next.js
 /.next/
 /out/

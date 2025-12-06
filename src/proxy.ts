@@ -21,8 +21,8 @@ interface MiddlewareConfig {
 
 export const config: MiddlewareConfig = {
   matcher: [
-    "/",
     "/createtask",
-    "/login"
+    "/login",
+    "/signup"
   ]
 }
