@@ -1,0 +1,12 @@
+directories:
+  output: desktop-build
+  buildResources: build
+appId: com.rohit.notesapp
+productName: Notes Desktop App
+files:
+  - filter:
+      - '**/*'
+      - '!desktop-build'
+win:
+  target: nsis
+electronVersion: 39.2.6
