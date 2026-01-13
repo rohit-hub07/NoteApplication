@@ -7,10 +7,13 @@ import { toast } from "react-hot-toast";
 import { Trash2, Plus, Search, FileText } from "lucide-react";
 import { useAuth } from "../context/userContext";
 
+
 export default function HomePage() {
-  const auth = useAuth();
-  if (!auth) return null;
-  const { userId } = auth;
+  const { userId } = useAuth();
+
+  // if(userId == null){
+  //   return toast.error("You have to login first!");
+  // }
 
   interface Task {
     _id: string;
@@ -24,7 +27,9 @@ export default function HomePage() {
 
   useEffect(() => {
     getTask();
+
   }, []);
+
 
   const getTask = async () => {
     const res = await axios.get("api/todo/showtodo");

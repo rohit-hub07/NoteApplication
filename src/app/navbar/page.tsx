@@ -17,7 +17,10 @@ export default function Navbar() {
   let { userId, refreshedUser } = auth;
 
   useEffect(() => {
-    refreshedUser();
+    const user = async() => {
+      await refreshedUser();
+    };
+    user();
   }, [])
 
   const handleLogout = async (e: any) => {

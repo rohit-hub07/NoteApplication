@@ -22,6 +22,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await axios.get("/api/user/me", {
         withCredentials: true
       })
+      console.log("response inside of usercontext refreshuser: ",res)
+      // if(res.)
       setUserId(res.data.userId || null);
     } catch (error) {
       setUserId(null);

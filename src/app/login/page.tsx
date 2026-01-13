@@ -1,9 +1,9 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../context/userContext";
 import Link from "next/link";
 
@@ -11,10 +11,18 @@ export default function LoginPage() {
   const [email, setEmail] = useState<String>();
   const [password, setPassword] = useState<String>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const reason = searchParams.get("reason");
 
   const authUser = useAuth();
   if (!authUser) return null;
   const { refreshedUser } = authUser;
+
+  useEffect(() => {
+    if (reason === "auth") {
+      toast.error('You must login first!');
+    }
+  }, [reason]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -27,7 +35,7 @@ export default function LoginPage() {
       if (res.data?.success) {
         const res = await axios.get("/api/user/me");
         toast.success(res.data?.message);
-        refreshedUser();
+        await refreshedUser();
         router.push("/home")
       }
     } catch (error: any) {

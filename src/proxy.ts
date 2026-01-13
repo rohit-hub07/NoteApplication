@@ -15,17 +15,18 @@ import { NextRequest } from "next/server";
 //   }
 // }
 
-export function proxy(request: NextRequest){
+export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const protectedPath = path.includes("/createtask") || path.includes("/api/todo/createtodo") || path.includes("/api/todo/deletetodo");
 
   const token = request.cookies.get('token')?.value || ''
 
-  if(protectedPath && !token){
-    return NextResponse.json({
-      message: "You are not allowed to perform this action!",
-      success: false,
-    },{status: 403})
+  if (protectedPath && !token) {
+    
+    const loginIssue = new URL("/login", request.url);
+    loginIssue.searchParams.set("reason", "auth");
+
+    return NextResponse.redirect(loginIssue);    
   }
 
   return NextResponse.next();
