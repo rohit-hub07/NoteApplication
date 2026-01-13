@@ -4,21 +4,7 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import toast from "react-hot-toast"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import Link from "next/link";
-
-
 
 export default function Signup() {
   const [username, setUsername] = useState<string>()
@@ -34,10 +20,9 @@ export default function Signup() {
         email,
         password
       })
-      console.log("res data for signup page: ", res.data);
 
       if (res.data.success) {
-        toast.success("User signup successfully!")
+        toast.success("Account created successfully!")
         router.push("/home")
       }
     } catch (error: any) {
@@ -46,61 +31,86 @@ export default function Signup() {
   }
 
   return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Create account</h1>
+          <p className="mt-2 text-sm text-zinc-500">Get started with your notes</p>
+        </div>
 
-    <Card className="w-full max-w-sm m-auto mt-10">
-      <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
+        <div className="rounded-xl border border-zinc-200 bg-white p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-zinc-700">
+                Username
+              </label>
+              <input
                 onChange={(e) => setUsername(e.target.value)}
                 id="username"
                 type="text"
                 name="username"
-                placeholder="username"
+                placeholder="johndoe"
                 required
+                className="mt-1.5 block w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-zinc-100"
               />
             </div>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  onChange={(e) => setEmail(e.target.value)}
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input onChange={(e) => setPassword(e.target.value)} id="password" placeholder="******" type="password" required />
-              </div>
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-zinc-700">
+                Email
+              </label>
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                id="email"
+                type="email"
+                name="email"
+                placeholder="you@example.com"
+                required
+                className="mt-1.5 block w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-zinc-100"
+              />
             </div>
-            <div className="flex">
-              <p className="mr-3">Already have a account?</p><Link className="underline" href="/login">
-                Login
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-zinc-700">
+                Password
+              </label>
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                required
+                className="mt-1.5 block w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-zinc-100"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-zinc-800 active:scale-95"
+            >
+              Create account
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-zinc-600">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="font-medium text-zinc-900 transition-colors hover:text-zinc-700"
+              >
+                Sign in
               </Link>
-            </div>
-            <div className="mt-6">
-              <Button type="submit" className="w-full">
-                Signup
-              </Button>
-            </div>
+            </p>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+    </div>
+  )
+}
+        </form >
+      </CardContent >
+    </Card >
   )
 }
 

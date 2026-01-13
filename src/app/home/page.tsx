@@ -4,17 +4,8 @@ import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Search, FileText } from "lucide-react";
 import { useAuth } from "../context/userContext";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   const auth = useAuth();
@@ -29,6 +20,7 @@ export default function HomePage() {
   }
 
   const [task, setTask] = useState<Task[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     getTask();
@@ -47,85 +39,108 @@ export default function HomePage() {
     toast.success(res?.data?.message);
   };
 
+  const filteredTasks = task.filter(
+    (t) =>
+      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Your Tasks</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your notes and to-dos in a clean, modern view.
-          </p>
-        </div>
-        <Button asChild className="gap-2">
-          <Link href="/createtask">
-            <Plus className="size-4" /> Create Task
+    <div className="min-h-screen bg-zinc-50">
+      <div className="mx-auto max-w-6xl px-6 py-12">
+        <div className="mb-12 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+              All Notes
+            </h1>
+            <p className="mt-1 text-sm text-zinc-500">
+              {task.length} {task.length === 1 ? 'note' : 'notes'}
+            </p>
+          </div>
+
+          <Link
+            href="/createtask"
+            className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-zinc-800 active:scale-95"
+          >
+            <Plus className="h-4 w-4" strokeWidth={2} />
+            New Note
           </Link>
-        </Button>
-      </div>
+        </div>
 
-      {userId && task.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {task.map((el) => (
-            <Card
-              key={el._id}
-              className="group bg-card border border-border/50 hover:border-border transition-all duration-200 hover:shadow-lg"
-            >
-              <CardHeader className="pb-3">
-                <CardTitle className="wrap-break-word text-base font-semibold text-card-foreground line-clamp-2">
+        <div className="mb-8">
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" strokeWidth={2} />
+            <input
+              type="text"
+              placeholder="Search notes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-lg border border-zinc-200 bg-white py-2.5 pl-10 pr-4 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-zinc-100"
+            />
+          </div>
+        </div>
+
+        {userId && filteredTasks.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredTasks.map((el) => (
+              <div
+                key={el._id}
+                className="group relative flex flex-col rounded-xl border border-zinc-200 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-zinc-100"
+              >
+                <h3 className="mb-2 line-clamp-2 text-base font-medium text-zinc-900">
                   {el.title}
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap wrap-break-word max-h-32 overflow-y-auto leading-relaxed [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                </h3>
+                <p className="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-zinc-600">
                   {el.description}
                 </p>
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <span>
+                <div className="flex items-center justify-between border-t border-zinc-100 pt-4">
+                  <time className="text-xs text-zinc-400" dateTime={el.createdAt}>
                     {new Date(el.createdAt).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
                     })}
-                  </span>
+                  </time>
+                  <button
+                    onClick={() => deleteTask(el._id)}
+                    className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
+                    aria-label={`Delete ${el.title}`}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                    Delete
+                  </button>
                 </div>
-              </CardContent>
-
-              <CardFooter className="pt-3">
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="ml-auto gap-1.5"
-                  type="button"
-                  onClick={() => deleteTask(el._id)}
-                  aria-label={`Delete ${el.title}`}
-                >
-                  <Trash2 className="size-3.5" />
-                  Delete
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="max-w-md mx-auto text-center bg-card border border-border/50">
-          <CardHeader className="pb-4">
-            <div className="mx-auto mb-3 w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-              <Plus className="size-5 text-muted-foreground" />
+              </div>
+            ))}
+          </div>
+        ) : userId && task.length > 0 && filteredTasks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-white py-16 text-center">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
+              <Search className="h-5 w-5 text-zinc-400" strokeWidth={2} />
             </div>
-            <CardTitle className="text-lg font-semibold text-card-foreground">No tasks yet</CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              Create your first task to get started organizing your notes.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="justify-center">
-            <Button asChild>
-              <Link href="/createtask">Create Task</Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
+            <h3 className="mb-1 text-base font-medium text-zinc-900">No results found</h3>
+            <p className="text-sm text-zinc-500">
+              Try adjusting your search
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-white py-16 text-center">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
+              <FileText className="h-5 w-5 text-zinc-400" strokeWidth={2} />
+            </div>
+            <h3 className="mb-1 text-base font-medium text-zinc-900">No notes yet</h3>
+            <p className="mb-6 text-sm text-zinc-500">
+              Create your first note to get started
+            </p>
+            <Link
+              href="/createtask"
+              className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-zinc-800 active:scale-95"
+            >
+              <Plus className="h-4 w-4" strokeWidth={2} />
+              New Note
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
