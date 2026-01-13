@@ -1,14 +1,13 @@
 "use client"
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../context/userContext";
-import { Suspense } from "react";
 import Link from "next/link";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState<String>();
   const [password, setPassword] = useState<String>();
   const router = useRouter();
@@ -22,6 +21,8 @@ export default function LoginPage() {
   useEffect(() => {
     if (reason === "auth") {
       toast.error('You must login first!');
+      // Clear the URL parameter after showing the toast
+      window.history.replaceState({}, '', '/login');
     }
   }, [reason]);
 
@@ -46,7 +47,6 @@ export default function LoginPage() {
   }
 
   return (
-    <Suspense>
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
@@ -107,8 +107,14 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-    </Suspense>
   )
 }
 
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-zinc-50">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  )
+}
 
