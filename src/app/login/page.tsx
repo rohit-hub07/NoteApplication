@@ -5,6 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "../context/userContext";
+import { Suspense } from "react";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -45,6 +46,7 @@ export default function LoginPage() {
   }
 
   return (
+    <Suspense>
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
@@ -105,6 +107,7 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </Suspense>
   )
 }
 
