@@ -108,9 +108,4 @@ export default function Signup() {
     </div>
   )
 }
-        </form >
-      </CardContent >
-    </Card >
-  )
-}
 
