@@ -4,16 +4,20 @@ import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Trash2, Plus, Search, FileText } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useAuth } from "../context/userContext";
+import { useRouter } from "next/navigation";
+import NoteCard from "@/components/NoteCard";
+import SearchInput from "@/components/SearchInput";
+import EmptyState from "@/components/EmptyState";
+import NoSearchResults from "@/components/NoSearchResults";
+import NoteCardSkeleton from "@/components/NoteCardSkeleton";
+import Footer from "@/components/Footer";
 
 
 export default function HomePage() {
-  const { userId } = useAuth();
-
-  // if(userId == null){
-  //   return toast.error("You have to login first!");
-  // }
+  const { userId, loading } = useAuth();
+  const router = useRouter();
 
   interface Task {
     _id: string;
@@ -24,16 +28,30 @@ export default function HomePage() {
 
   const [task, setTask] = useState<Task[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    getTask();
-
-  }, []);
+    // Redirect to login if not authenticated (only after loading is complete)
+    if (!loading && !userId) {
+      router.push('/login?reason=auth');
+      return;
+    }
+    if (!loading && userId) {
+      getTask();
+    }
+  }, [userId, loading, router]);
 
 
   const getTask = async () => {
-    const res = await axios.get("api/todo/showtodo");
-    setTask(res.data.alltasks);
+    try {
+      setIsLoading(true);
+      const res = await axios.get("api/todo/showtodo");
+      setTask(res.data.alltasks);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const deleteTask = async (id: string) => {
@@ -50,102 +68,86 @@ export default function HomePage() {
       t.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-950">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900 dark:border-gray-800 dark:border-t-gray-50"></div>
+      </div>
+    );
+  }
+
+  // Don't render the content if not authenticated (will be redirected)
+  if (!userId) {
+    return null;
+  }
+
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="mb-12 flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="mx-auto max-w-6xl px-6 py-8 sm:py-12">
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50 sm:text-4xl">
               All Notes
             </h1>
-            <p className="mt-1 text-sm text-zinc-500">
-              {task.length} {task.length === 1 ? 'note' : 'notes'}
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {isLoading ? (
+                <span className="inline-block h-4 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-800"></span>
+              ) : (
+                <>
+                  {task.length} {task.length === 1 ? "note" : "notes"}
+                </>
+              )}
             </p>
           </div>
 
           <Link
             href="/createtask"
-            className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-zinc-800 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-gray-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-900/20 active:scale-95 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200 dark:focus:ring-gray-50/20"
           >
-            <Plus className="h-4 w-4" strokeWidth={2} />
+            <Plus className="h-5 w-5" strokeWidth={2.5} />
             New Note
           </Link>
         </div>
 
+        {/* Search Bar */}
         <div className="mb-8">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" strokeWidth={2} />
-            <input
-              type="text"
-              placeholder="Search notes..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-zinc-200 bg-white py-2.5 pl-10 pr-4 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-zinc-100"
-            />
-          </div>
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search notes by title or content..."
+          />
         </div>
 
-        {userId && filteredTasks.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Notes Grid / Loading / Empty States */}
+        {isLoading ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <NoteCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : userId && filteredTasks.length > 0 ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredTasks.map((el) => (
-              <div
+              <NoteCard
                 key={el._id}
-                className="group relative flex flex-col rounded-xl border border-zinc-200 bg-white p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-zinc-100"
-              >
-                <h3 className="mb-2 line-clamp-2 text-base font-medium text-zinc-900">
-                  {el.title}
-                </h3>
-                <p className="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-zinc-600">
-                  {el.description}
-                </p>
-                <div className="flex items-center justify-between border-t border-zinc-100 pt-4">
-                  <time className="text-xs text-zinc-400" dateTime={el.createdAt}>
-                    {new Date(el.createdAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </time>
-                  <button
-                    onClick={() => deleteTask(el._id)}
-                    className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                    aria-label={`Delete ${el.title}`}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
-                    Delete
-                  </button>
-                </div>
-              </div>
+                id={el._id}
+                title={el.title}
+                description={el.description}
+                createdAt={el.createdAt}
+                onDelete={deleteTask}
+              />
             ))}
           </div>
         ) : userId && task.length > 0 && filteredTasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-white py-16 text-center">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
-              <Search className="h-5 w-5 text-zinc-400" strokeWidth={2} />
-            </div>
-            <h3 className="mb-1 text-base font-medium text-zinc-900">No results found</h3>
-            <p className="text-sm text-zinc-500">
-              Try adjusting your search
-            </p>
-          </div>
+          <NoSearchResults />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-zinc-200 bg-white py-16 text-center">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100">
-              <FileText className="h-5 w-5 text-zinc-400" strokeWidth={2} />
-            </div>
-            <h3 className="mb-1 text-base font-medium text-zinc-900">No notes yet</h3>
-            <p className="mb-6 text-sm text-zinc-500">
-              Create your first note to get started
-            </p>
-            <Link
-              href="/createtask"
-              className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-zinc-800 active:scale-95"
-            >
-              <Plus className="h-4 w-4" strokeWidth={2} />
-              New Note
-            </Link>
-          </div>
+          <EmptyState />
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

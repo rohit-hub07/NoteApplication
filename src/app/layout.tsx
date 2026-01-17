@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"
@@ -37,11 +37,36 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 dark:bg-gray-950`}
       >
         <AuthProvider>
           <Navbar />
-          <Toaster position="top-center" />
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              className: '',
+              style: {
+                background: 'white',
+                color: '#111827',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.75rem',
+                fontSize: '0.875rem',
+                padding: '0.75rem 1rem',
+              },
+              success: {
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: 'white',
+                },
+              },
+              error: {
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: 'white',
+                },
+              },
+            }}
+          />
           {children}
         </AuthProvider>
       </body>

@@ -16,7 +16,7 @@ function LoginForm() {
 
   const authUser = useAuth();
   if (!authUser) return null;
-  const { refreshedUser } = authUser;
+  const { refreshedUser, userId, loading } = authUser;
 
   useEffect(() => {
     if (reason === "auth") {
@@ -25,6 +25,13 @@ function LoginForm() {
       window.history.replaceState({}, '', '/login');
     }
   }, [reason]);
+
+  useEffect(() => {
+    // Redirect to home if already logged in (only after loading is complete)
+    if (!loading && userId) {
+      router.push('/home');
+    }
+  }, [userId, loading, router]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -47,17 +54,22 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-6">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Welcome back</h1>
-          <p className="mt-2 text-sm text-zinc-500">Sign in to your account</p>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-6 dark:bg-gray-950">
+      <div className="w-full max-w-md">
+        <div className="mb-10 text-center">
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-gray-900 to-gray-700 dark:from-gray-50 dark:to-gray-200">
+            <svg className="h-7 w-7 text-white dark:text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">Welcome back</h1>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Sign in to continue to your notes</p>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-zinc-700">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-gray-50">
                 Email
               </label>
               <input
@@ -67,12 +79,13 @@ function LoginForm() {
                 name="email"
                 placeholder="you@example.com"
                 required
-                className="mt-1.5 block w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-zinc-100"
+                autoComplete="email"
+                className="mt-2 block w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-50 dark:placeholder:text-gray-500 dark:hover:border-gray-700 dark:focus:border-gray-600 dark:focus:bg-gray-900 dark:focus:ring-gray-50/10"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-zinc-700">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 dark:text-gray-50">
                 Password
               </label>
               <input
@@ -80,25 +93,26 @@ function LoginForm() {
                 id="password"
                 type="password"
                 required
+                autoComplete="current-password"
                 placeholder="••••••••"
-                className="mt-1.5 block w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-300 focus:outline-none focus:ring-4 focus:ring-zinc-100"
+                className="mt-2 block w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 transition-all placeholder:text-gray-400 hover:border-gray-300 focus:border-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-900/50 dark:text-gray-50 dark:placeholder:text-gray-500 dark:hover:border-gray-700 dark:focus:border-gray-600 dark:focus:bg-gray-900 dark:focus:ring-gray-50/10"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:bg-zinc-800 active:scale-95"
+              className="w-full rounded-full bg-gray-900 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-gray-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-900/20 active:scale-95 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-200 dark:focus:ring-gray-50/20"
             >
               Sign in
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-zinc-600">
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Don't have an account?{" "}
               <Link
                 href="/signup"
-                className="font-medium text-zinc-900 transition-colors hover:text-zinc-700"
+                className="font-semibold text-gray-900 transition-colors hover:text-gray-700 dark:text-gray-50 dark:hover:text-gray-300"
               >
                 Sign up
               </Link>
