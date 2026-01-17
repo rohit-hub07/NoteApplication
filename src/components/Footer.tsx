@@ -10,7 +10,7 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-6">
             <a
-              href="https://github.com"
+              href="https://github.com/rohit-hub07/NoteApplication"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
