@@ -2,7 +2,7 @@
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-white/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60 dark:border-gray-800 dark:bg-gray-950/80 dark:supports-[backdrop-filter]:bg-gray-950/60">
+    <footer className="border-t border-gray-200 bg-white/80 backdrop-blur-xl supports-backdrop-filter:bg-white/60 dark:border-gray-800 dark:bg-gray-950/80 dark:supports-backdrop-filter:bg-gray-950/60">
       <div className="mx-auto max-w-6xl px-6 py-8">
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">

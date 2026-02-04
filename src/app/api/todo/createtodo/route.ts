@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     // await newTask.save();
     return NextResponse.json({
-      message: "Task created successfully",
+      message: "Note added successfully",
       success: true,
       task: newTask
     }, { status: 201 })

@@ -12,16 +12,16 @@ export async function GET(request: NextRequest) {
     const allTodos = await Todo.find({ owner: ownerId });
     if (!ownerId || ownerId == undefined) {
       return NextResponse.json({
-        error: "Please login to add tasks!"
+        error: "Please login to add Notes"
       }, { status: 400 })
     }
     if (!allTodos || allTodos.length < 0) {
       return NextResponse.json({
-        message: "No tasks added"
+        message: "No Notes added"
       }, { status: 404 })
     }
     return NextResponse.json({
-      message: "All tasks fetched!",
+      message: "All Notes fetched!",
       alltasks: allTodos
     }, { status: 200 })
   } catch (error: any) {

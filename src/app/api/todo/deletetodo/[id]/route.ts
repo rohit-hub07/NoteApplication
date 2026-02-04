@@ -28,12 +28,12 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const task = await Todo.findByIdAndDelete({ _id: id });
     if (!task) {
       return NextResponse.json({
-        message: "Task doesn't exist!",
+        message: "Note doesn't exist!",
         success: false
       }, { status: 404 })
     }
     return NextResponse.json({
-      message: "Task deleted!",
+      message: "Note deleted!",
       success: true,
     }, { status: 200 })
 
