@@ -23,7 +23,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     // console.log("taskowner: ", taskid.owner);
 
     if ((decodedUserID).toString() != (taskid.owner).toString()) {
-      return NextResponse.json({ message: "You don't have acces to perform this action!", success: false }, { status: 409 })
+      return NextResponse.json({ message: "You don't have access to perform this action!", success: false }, { status: 409 })
     }
     const task = await Todo.findByIdAndDelete({ _id: id });
     if (!task) {
