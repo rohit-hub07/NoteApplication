@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Trash2, X } from "lucide-react";
+import { Edit2, Trash2, X } from "lucide-react";
 
 interface NoteCardProps {
   id: string;
@@ -19,9 +20,15 @@ export default function NoteCard({
   onDelete,
 }: NoteCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/edittask/${id}`);
+  };
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -108,6 +115,13 @@ export default function NoteCard({
 
             {/* Modal Footer */}
             <div className="flex items-center justify-end gap-3 border-t border-gray-100 p-6 dark:border-gray-800">
+              <button
+                onClick={handleEditClick}
+                className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                <Edit2 className="h-4 w-4" strokeWidth={2} />
+                Edit Note
+              </button>
               <button
                 onClick={() => {
                   onDelete(id);
