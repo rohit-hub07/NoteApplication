@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Edit2, Trash2, X } from "lucide-react";
+import { Edit2, Trash2, X, EyeOff, Eye } from "lucide-react";
 
 interface NoteCardProps {
   id: string;
@@ -10,6 +10,8 @@ interface NoteCardProps {
   description: string;
   createdAt: string;
   onDelete: (id: string) => void;
+  onHide: (id: string) => void;
+  isHidden: boolean;
 }
 
 export default function NoteCard({
@@ -18,6 +20,8 @@ export default function NoteCard({
   description,
   createdAt,
   onDelete,
+  onHide,
+  isHidden,
 }: NoteCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
@@ -34,6 +38,14 @@ export default function NoteCard({
     e.stopPropagation();
     onDelete(id);
   };
+
+  const handleHideClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onHide(id);
+  };
+
+  const hideLabel = isHidden ? "Unhide" : "Hide";
+  const HideIcon = isHidden ? Eye : EyeOff;
 
   return (
     <>
@@ -58,14 +70,24 @@ export default function NoteCard({
               year: "numeric",
             })}
           </time>
-          <button
-            onClick={handleDeleteClick}
-            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-500 opacity-0 transition-all duration-200 hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500/20 dark:text-gray-400 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:focus:ring-red-500/30"
-            aria-label={`Delete note: ${title}`}
-          >
-            <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
-            Delete
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleHideClick}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-500 opacity-0 transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:text-gray-400 dark:hover:bg-blue-950/30 dark:hover:text-blue-400 dark:focus:ring-blue-500/30"
+              aria-label={`${hideLabel} note: ${title}`}
+            >
+              <HideIcon className="h-3.5 w-3.5" strokeWidth={2} />
+              {hideLabel}
+            </button>
+            <button
+              onClick={handleDeleteClick}
+              className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-gray-500 opacity-0 transition-all duration-200 hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500/20 dark:text-gray-400 dark:hover:bg-red-950/30 dark:hover:text-red-400 dark:focus:ring-red-500/30"
+              aria-label={`Delete note: ${title}`}
+            >
+              <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+              Delete
+            </button>
+          </div>
         </div>
       </article>
 
@@ -115,6 +137,13 @@ export default function NoteCard({
 
             {/* Modal Footer */}
             <div className="flex items-center justify-end gap-3 border-t border-gray-100 p-6 dark:border-gray-800">
+              <button
+                onClick={handleHideClick}
+                className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-950/50"
+              >
+                <HideIcon className="h-4 w-4" strokeWidth={2} />
+                {hideLabel}
+              </button>
               <button
                 onClick={handleEditClick}
                 className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"

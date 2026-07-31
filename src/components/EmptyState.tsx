@@ -5,7 +5,7 @@ import { Plus, FileText } from "lucide-react";
 
 export default function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white py-20 text-center dark:border-gray-800 dark:from-gray-900 dark:to-gray-900/50">
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white py-12 text-center dark:border-gray-800 dark:from-gray-900 dark:to-gray-900/50">
       <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700">
         <FileText className="h-7 w-7 text-gray-400 dark:text-gray-500" strokeWidth={2} />
       </div>
