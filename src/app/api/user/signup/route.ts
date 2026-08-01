@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       email: newUser.email
     }
 
-    const token = jwt.sign(tokenData, process.env.JWT_SECRET!, {expiresIn: '1d'}) 
+    const token = jwt.sign(tokenData, process.env.JWT_SECRET!, {expiresIn: '30d'}) 
 
     const response = NextResponse.json({
       message: 'User registered successfully!',
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 3
+      maxAge: 60 * 60 * 24 * 30
     })
     return response;
   } catch (error: any) { 
