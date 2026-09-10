@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Simply Notes for daily tasks",
+  title: "Simple Notes for daily tasks",
   description: "Created by Rohit(codename- Dexter)",
 };
 
