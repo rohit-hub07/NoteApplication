@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+// @ts-expect-error Next.js processes this global stylesheet at build time.
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./navbar/page";
